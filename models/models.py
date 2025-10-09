@@ -1,4 +1,4 @@
-import lightning as L
+import pytorch_lightning as L
 import pyro.distributions as dist
 import pyro.distributions.transforms as T
 from torch import nn

@@ -1,11 +1,11 @@
 from argparse import ArgumentParser
 from typing import Union
 
-import lightning as L
+import pytorch_lightning as L
 import torch
 import torch.nn.functional as F
 import torchvision
-from lightning import Trainer
+from pytorch_lightning import Trainer
 from torch import nn
 
 

@@ -70,7 +70,7 @@ def make_dataset(
 
     logger.info(f"# of dataset samples: {len(dataset):,d}")
 
-    # Aggregated datasets do not expose (yet) these attributes, so add them.
+    # Aggregated astro_datasets do not expose (yet) these attributes, so add them.
     if not hasattr(dataset, "transform"):
         setattr(dataset, "transform", transform)
     if not hasattr(dataset, "target_transform"):

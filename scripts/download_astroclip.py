@@ -1,6 +1,6 @@
 import argparse
 import os
-from datasets import load_dataset
+from astro_datasets import load_dataset
 
 if __name__ == "__main__":
     # Parse command-line arguments

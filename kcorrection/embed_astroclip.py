@@ -42,7 +42,7 @@ def embed_astroclip(
 
     print("Loading the data")
     
-    # Prepare HDF5 file with extendable datasets
+    # Prepare HDF5 file with extendable astro_datasets
     with h5py.File(save_path, "w") as f:
         total_samples = 0
         initialized = False
@@ -60,7 +60,7 @@ def embed_astroclip(
                 images_batch = batch_test["image"].cpu().numpy()
                 spectra_batch = batch_test["spectrum"].cpu().numpy()
 
-                # Initialize datasets on the first batch
+                # Initialize astro_datasets on the first batch
                 if not initialized:
                     image_embed_shape = (0, im_embed_batch.shape[1])
                     spectrum_embed_shape = (0, sp_embed_batch.shape[1])
@@ -79,7 +79,7 @@ def embed_astroclip(
                 # Determine batch size
                 batch_size_actual = im_embed_batch.shape[0]
 
-                # Resize datasets to accommodate new data
+                # Resize astro_datasets to accommodate new data
                 image_embeddings.resize(total_samples + batch_size_actual, axis=0)
                 spectrum_embeddings.resize(total_samples + batch_size_actual, axis=0)
                 images.resize(total_samples + batch_size_actual, axis=0)

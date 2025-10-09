@@ -1,7 +1,7 @@
 import os
 import argparse
 import pandas as pd
-from datasets import load_dataset
+from astro_datasets import load_dataset
 from tqdm import tqdm
 import kcorrect.kcorrect
 import pickle
@@ -119,13 +119,13 @@ def save_k_corrections(blanton_kcorrs, save_path):
 
 if __name__ == "__main__":
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="Process AstroCLIP and DESI-LS datasets.")
+    parser = argparse.ArgumentParser(description="Process AstroCLIP and DESI-LS astro_datasets.")
     parser.add_argument("--astroclip_path", type=str, required=True, help="Path to the AstroCLIP dataset.")
     parser.add_argument("--desi_path", type=str, required=True, help="Path to the DESI photometry data (HDF5).")
     parser.add_argument("--save_path", type=str, default="../data/blanton_kcorrs.pickle", help="Path to save the K-corrections (pickle).")
     args = parser.parse_args()
 
-    # Load datasets
+    # Load astro_datasets
     astroclip_train = load_astroclip_dataset(args.astroclip_path, split="train")
     astroclip_test = load_astroclip_dataset(args.astroclip_path, split="test")
     photometry = load_photometry_data(args.desi_path)

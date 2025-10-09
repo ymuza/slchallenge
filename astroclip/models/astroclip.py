@@ -1,13 +1,14 @@
 import os
 import sys
 from typing import Tuple
-
-import lightning as L
+import pytorch_lightning as L
+#import lightning as L
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from dinov2.eval.setup import setup_and_build_model
+
 
 from ..modules import MLP, CrossAttentionHead
 from .specformer import SpecFormer

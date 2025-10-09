@@ -1,118 +1,97 @@
-# Copyright 2020 The HuggingFace Datasets Authors and the current dataset script contributor.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""Joint dataset of DESI Legacy Survey and DESI Early Data Release."""
+# astroclip/data/dataset.py
 
-import datasets
-import h5py
+import os
 import numpy as np
-from aiohttp import ClientTimeout 
+import torch
+from torch.utils.data import Dataset
+from astropy.io import fits
+from astropy.table import Table
 
-_CITATION = """
-"""
+# ---------------------------------------------------------------------
+# Utilidad para cargar imágenes FITS y generar triplets
+# ---------------------------------------------------------------------
+def load_fits_image(path, size=41, strict=False):
+    """Carga una imagen FITS como tensor normalizado (3 bandas RGB-like)."""
+    try:
+        with fits.open(path, memmap=False) as hdul:
+            data = hdul[0].data.astype(np.float32)
+    except Exception as e:
+        if strict:
+            raise e
+        return None
 
-_DESCRIPTION = """\
-This dataset is designed for cross-modal learning between images and spectra of galaxies
-contained in the DESI Early Data Release and the Legacy Survey DR9. It contains roughly 150k
-examples of images and spectra of galaxies, with their redshifts and targetids.
-"""
+    # Normalizar y recortar al tamaño esperado
+    if data.ndim == 2:
+        data = np.stack([data] * 3, axis=0)  # convertir monocanal a 3 canales
+    elif data.ndim == 3 and data.shape[0] >= 3:
+        data = data[:3]  # solo 3 canales
+    else:
+        return None
 
-_HOMEPAGE = ""
+    # Redimensionar al centro si es más grande que `size`
+    h, w = data.shape[1], data.shape[2]
+    if h > size and w > size:
+        start_h = (h - size) // 2
+        start_w = (w - size) // 2
+        data = data[:, start_h:start_h + size, start_w:start_w + size]
 
-_LICENSE = ""
-
-_URLS = {
-    "joint": "https://users.flatironinstitute.org/~flanusse/astroclip_desi.1.1.5.h5",
-}
+    tensor = torch.from_numpy(data)
+    return tensor
 
 
-class AstroClipDataset(datasets.GeneratorBasedBuilder):
-    """TODO: Short description of my dataset."""
+def build_triplets(root):
+    """Construye lista de tripletas (id, path, band)."""
+    triplets = []
+    for fname in sorted(os.listdir(root)):
+        if fname.endswith(".fits"):
+            obj_id = fname.split("_")[0] + "_" + fname.split("_")[1] + "_" + fname.split("_")[2]
+            band = fname.split("_")[-1].replace(".fits", "")
+            triplets.append((obj_id, os.path.join(root, fname), band))
+    return triplets
 
-    VERSION = datasets.Version("1.1.5")
 
-    BUILDER_CONFIGS = [
-        datasets.BuilderConfig(
-            name="joint",
-            version=VERSION,
-            description="This part of the dataset covers examples from both specral and image domains",
-        ),
-    ]
+# ---------------------------------------------------------------------
+# Dataset principal
+# ---------------------------------------------------------------------
+class AstroClipDataset(Dataset):
+    def __init__(self, root, meta_fits, size=41, strict_fits=False):
+        super().__init__()
+        self.triplets = build_triplets(root)
+        self.size = size
+        self.strict = strict_fits
 
-    DEFAULT_CONFIG_NAME = "joint"
+        # cargar catálogo y quedarnos con zlens
+        cat = Table.read(meta_fits, format="fits")
+        self.zlens = np.array(cat["zlens"], dtype=np.float32)
 
-    def _info(self):
-        if self.config.name == "joint":
-            features = datasets.Features(
-                {
-                    "image": datasets.Array3D(shape=(152, 152, 3), dtype="float32"),
-                    "spectrum": datasets.Array2D(shape=(7781, 1), dtype="float32"),
-                    "redshift": datasets.Value("float32"),
-                    "targetid": datasets.Value("int64"),
-                }
-            )
-        else:
-            raise NotImplementedError(
-                "Only the joint configuration is implemented for now"
-            )
+        # Índices únicos por objeto
+        self.ids = sorted(list({t[0] for t in self.triplets}))
 
-        return datasets.DatasetInfo(
-            description=_DESCRIPTION,
-            features=features,
-            homepage=_HOMEPAGE,
-            license=_LICENSE,
-            citation=_CITATION,
-        )
+    def __len__(self):
+        return len(self.ids)
 
-    def _split_generators(self, dl_manager):
-        urls = _URLS[self.config.name]
-        dl_manager.download_config.storage_options["timeout"] = ClientTimeout(total=5000, connect=1000)
-        data_dir = dl_manager.download_and_extract(urls)
-        return [
-            datasets.SplitGenerator(
-                name=datasets.Split.TRAIN,
-                gen_kwargs={
-                    "filepath": data_dir,
-                    "split": "train",
-                },
-            ),
-            datasets.SplitGenerator(
-                name=datasets.Split.TEST,
-                gen_kwargs={"filepath": data_dir, "split": "test"},
-            ),
-        ]
+    def __getitem__(self, idx):
+        obj_id = self.ids[idx]
 
-    def _generate_examples(self, filepath, split):
-        """Yields examples."""
-        with h5py.File(filepath) as d:
-            for i in range(10):
-                # Access the data
-                images = d[str(i)]["images"]
-                spectra = d[str(i)]["spectra"]
-                redshifts = d[str(i)]["redshifts"]
-                targetids = d[str(i)]["targetids"]
+        # seleccionar triplets correspondientes al objeto
+        obj_triplets = [t for t in self.triplets if t[0] == obj_id]
+        images = []
+        for _, path, _ in obj_triplets:
+            img = load_fits_image(path, self.size, self.strict)
+            if img is not None:
+                images.append(img)
 
-                dset_size = len(targetids)
+        if not images:
+            raise RuntimeError(f"No se pudieron cargar imágenes para {obj_id}")
 
-                if split == "train":
-                    dset_range = (0, int(0.8 * dset_size))
-                else:
-                    dset_range = (int(0.8 * dset_size), dset_size)
+        # Usamos la primera imagen válida
+        image = images[0]
+        redshift = torch.tensor(self.zlens[idx], dtype=torch.float32)
+        flag = torch.tensor(True, dtype=torch.bool)
 
-                for j in range(dset_range[0], dset_range[1]):
-                    yield str(targetids[j]), {
-                        "image": np.array(images[j]).astype("float32"),
-                        "spectrum": np.reshape(spectra[j], [-1, 1]).astype("float32"),
-                        "redshift": redshifts[j],
-                        "targetid": targetids[j],
-                    }
+        return {
+            "image": image,
+            "redshift": redshift,
+            "flag": flag,
+            "id": obj_id,
+        }

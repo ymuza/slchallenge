@@ -5,7 +5,7 @@ from multiprocessing import Pool
 import h5py
 import numpy as np
 import torch
-from datasets import load_dataset
+from astro_datasets import load_dataset
 from torch import package
 from torchvision.transforms import CenterCrop, Compose, ToTensor
 from tqdm import tqdm

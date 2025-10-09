@@ -13,7 +13,7 @@ def load_fits_data(fits_path, selected_col_names):
         return fastspec_table[selected_col_names]
 
 def load_hdf5_data_in_chunks(hdf5_path, chunk_size=200):
-    """Load datasets from an HDF5 file in chunks and yield them."""
+    """Load astro_datasets from an HDF5 file in chunks and yield them."""
     with h5py.File(hdf5_path, "r") as f:
         num_objects = f['object_id'].shape[0]
         for start in tqdm(range(0, num_objects, chunk_size), desc="Reading HDF5 in chunks"):

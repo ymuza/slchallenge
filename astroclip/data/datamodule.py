@@ -1,6 +1,6 @@
 from typing import Callable, Dict, List
 
-import datasets
+import astro_datasets
 import lightning as L
 import torch
 from torch import Tensor
@@ -23,7 +23,7 @@ class AstroClipDataloader(L.LightningDataModule):
         self.save_hyperparameters()
 
     def setup(self, stage: str) -> None:
-        self.dataset = datasets.load_from_disk(self.hparams.path)
+        self.dataset = astro_datasets.load_from_disk(self.hparams.path)
         self.dataset.set_format(type="torch", columns=self.hparams.columns)
 
     def train_dataloader(self):

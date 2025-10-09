@@ -40,7 +40,7 @@ wget -P data/raw/ https://data.desi.lbl.gov/public/edr/vac/edr/fastspecfit/fuji/
 I made the relevant deredened fluxes at bands g,r and z avalible in kaggle:
 
 ```bash
-kaggle datasets download -d jeremiasrodriguez/flux-in-bands-g-r-and-z-for-galaxies-in-desi-edr -p data/
+kaggle astro_datasets download -d jeremiasrodriguez/flux-in-bands-g-r-and-z-for-galaxies-in-desi-edr -p data/
 unzip data/flux-in-bands-g-r-and-z-for-galaxies-in-desi-edr.zip -d data/
 ```
 
@@ -69,7 +69,7 @@ python blanton_analysis/calculate_blanton_K_corrections.py --astroclip_path data
 Alternatively, you can download the pre-calculated K corrections:
 
 ```bash
-kaggle datasets download -d jeremiasrodriguez/blanton-k-corrections-for-astroclip-dataset -p data/
+kaggle astro_datasets download -d jeremiasrodriguez/blanton-k-corrections-for-astroclip-dataset -p data/
 unzip data/blanton-k-corrections-for-astroclip-dataset.zip -d data/
 ```
 

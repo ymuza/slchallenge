@@ -41,7 +41,7 @@ NONLENSES_META = "/media/yamil/nvmeBlue/challenge_data/test_images/hsc_nonlenses
 
 BATCH_SIZE = 64
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-OUT_DIR = "outputs"
+OUT_DIR = "../outputs"
 os.makedirs(OUT_DIR, exist_ok=True)
 
 # ================================

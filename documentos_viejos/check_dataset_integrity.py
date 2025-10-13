@@ -5,8 +5,8 @@ from sklearn.decomposition import PCA
 from collections import Counter
 
 # --- Configuración ---
-EMB_PATH = "outputs/embeddings.npy"
-LABELS_PATH = "outputs/y_train_lenses.npy"
+EMB_PATH = "../outputs/embeddings.npy"
+LABELS_PATH = "../outputs/y_train_lenses.npy"
 
 print("🔹 Cargando datos...")
 X = np.load(EMB_PATH)

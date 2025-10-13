@@ -14,7 +14,7 @@ from tqdm import tqdm
 
 # ---------------- CONFIG ----------------
 DATASET = "/media/yamil/b5ef7208-1e9c-40d4-ab93-390950eedbce/astroclip_test_dataset/test_dataset"
-OUT_DIR = "outputs"
+OUT_DIR = "../outputs"
 os.makedirs(OUT_DIR, exist_ok=True)
 
 BANDS = ["i", "r", "g"]  # i→rojo, r→verde, g→azul

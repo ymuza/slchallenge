@@ -9,7 +9,7 @@ import os
 # --- Configuración ---
 os.makedirs("outputs", exist_ok=True)
 Z_TRAIN_PATH = "outputs/z_train.npy"
-SUBMISSION_PATH = "outputs/submission_real.csv"
+SUBMISSION_PATH = "documentos_viejos/submission_real.csv"
 
 print("🔹 Cargando datos...")
 
@@ -49,7 +49,7 @@ plt.ylabel("Densidad")
 plt.legend()
 plt.grid(True, alpha=0.3)
 
-output_path = "outputs/redshift_distribution_comparison_v2.png"
+output_path = "documentos_viejos/redshift_distribution_comparison_v2.png"
 plt.savefig(output_path, dpi=200)
 print(f"\n📈 Gráfico guardado en: {output_path}")
 

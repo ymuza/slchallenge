@@ -11,6 +11,8 @@ import warnings
 # ==============================
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 32
+#BASE_PATH = "/media/yamil/b5ef7208-1e9c-40d4-ab93-390950eedbce/astroclip_test_dataset/test_dataset"
+#OUTPUT_PATH = "outputs/embeddings_real.npy"
 BASE_PATH = "/media/yamil/b5ef7208-1e9c-40d4-ab93-390950eedbce/astroclip_test_dataset/test_dataset"
 OUTPUT_PATH = "outputs/embeddings_real.npy"
 IDS_PATH = "outputs/ids_real.npy"

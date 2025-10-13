@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 # --- Configuración ---
-INPUT_PATH = "outputs/submission_final_knn.csv"
+INPUT_PATH = "documentos_viejos/submission_final_knn.csv"
 OUTPUT_PATH = "outputs/submission_final_knn_calibrated.csv"
 TARGET_RATIO = 0.02  # 2% de lentes realistas
 

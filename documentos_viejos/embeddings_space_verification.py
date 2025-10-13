@@ -2,9 +2,9 @@ import numpy as np
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
-X_train = np.load("outputs/embeddings_test.npy")
-labels = np.load("outputs/labels_test.npy")
-X_test = np.load("outputs/embeddings_test.npy")  # los del conjunto real
+X_train = np.load("../outputs/embeddings_test.npy")
+labels = np.load("../outputs/labels_test.npy")
+X_test = np.load("../outputs/embeddings_test.npy")  # los del conjunto real
 
 pca = PCA(n_components=2)
 proj = pca.fit_transform(np.vstack([X_train, X_test]))

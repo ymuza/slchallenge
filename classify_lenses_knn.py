@@ -32,7 +32,7 @@ if X_train.shape[1] != X_test.shape[1]:
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
-joblib.dump(scaler, "outputs/scaler.pkl")
+joblib.dump(scaler, "documentos_viejos/scaler.pkl")
 
 # --- Etiquetas binarias (ejemplo simple: lenses si z > 0.5) ---
 y_train = (z_train > 0.5).astype(int)

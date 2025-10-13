@@ -11,7 +11,7 @@ import os
 TRAIN_PATH = "outputs/embeddings.npy"
 LABELS_PATH = "outputs/y_train_lenses.npy"
 ZTRAIN_PATH = "outputs/z_train.npy"
-ZPRED_PATH = "outputs/submission_real_aligned.csv"
+ZPRED_PATH = "documentos_viejos/submission_real_aligned.csv"
 
 os.makedirs("outputs", exist_ok=True)
 

@@ -8,10 +8,10 @@ import pandas as pd
 import os
 
 # --- Configuración ---
-TRAIN_PATH = "outputs/embeddings.npy"
-TEST_PATH = "outputs/embeddings_test.npy"
-LABELS_PATH = "outputs/y_train_lenses.npy"
-OUTPUT_DIR = "outputs"
+TRAIN_PATH = "../outputs/embeddings.npy"
+TEST_PATH = "../outputs/embeddings_test.npy"
+LABELS_PATH = "../outputs/y_train_lenses.npy"
+OUTPUT_DIR = "../outputs"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 print("🔹 Cargando datos...")

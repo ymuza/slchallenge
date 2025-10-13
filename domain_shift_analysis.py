@@ -19,7 +19,7 @@ from scipy.stats import ks_2samp
 
 # -------------------- Paths --------------------
 Z_TRAIN_PATH = "outputs/z_true.npy"
-SUBMISSION_PATH = "outputs/submission_real.csv"
+SUBMISSION_PATH = "documentos_viejos/submission_real.csv"
 
 print("🔹 Cargando datos...")
 

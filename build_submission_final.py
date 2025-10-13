@@ -3,9 +3,9 @@ import pandas as pd
 import os
 
 # --- Configuración ---
-REAL_PATH = "outputs/submission_real.csv"
-ALIGNED_PATH = "outputs/submission_real_aligned.csv"
-OUT_PATH = "outputs/submission_final.csv"
+REAL_PATH = "documentos_viejos/submission_real.csv"
+ALIGNED_PATH = "documentos_viejos/submission_real_aligned.csv"
+OUT_PATH = "documentos_viejos/submission_final.csv"
 
 print("🔹 Cargando predicciones originales y redshifts alineados...")
 

@@ -8,9 +8,9 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import roc_curve, auc, precision_recall_curve, average_precision_score
 
 # Paths
-TRAIN_PATH = "outputs/embeddings.npy"
-LABELS_PATH = "outputs/y_train_lenses.npy"
-os.makedirs("outputs", exist_ok=True)
+TRAIN_PATH = "../outputs/embeddings.npy"
+LABELS_PATH = "../outputs/y_train_lenses.npy"
+os.makedirs("../outputs", exist_ok=True)
 
 print("🔹 Cargando datos...")
 X = np.load(TRAIN_PATH)

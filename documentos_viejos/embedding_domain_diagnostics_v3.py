@@ -10,11 +10,11 @@ import os
 # ==============================
 # ⚙️ CONFIGURACIÓN INICIAL
 # ==============================
-os.makedirs("outputs", exist_ok=True)
-TRAIN_PATH = "outputs/embeddings.npy"        # AstroCLIP train (1024D)
-TEST_PATH = "outputs/embeddings_test.npy"    # DINOv2 real (768D)
-PDF_PATH = "outputs/domain_diagnostics_report.pdf"
-PLOT_PATH = "outputs/domain_diagnostics_v3.png"
+os.makedirs("../outputs", exist_ok=True)
+TRAIN_PATH = "../outputs/embeddings.npy"  # AstroCLIP train (1024D)
+TEST_PATH = "../outputs/embeddings_test.npy"  # DINOv2 real (768D)
+PDF_PATH = "../outputs/domain_diagnostics_report.pdf"
+PLOT_PATH = "../outputs/domain_diagnostics_v3.png"
 
 print("🔹 Cargando embeddings...")
 X_train = np.load(TRAIN_PATH)

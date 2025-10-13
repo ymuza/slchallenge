@@ -132,7 +132,7 @@ class GalaxyBatchDataset(Dataset):
                 align_corners=False
             ).squeeze(0)
 
-        # redshift tomado de la fila correspondiente
+        # redshift tomado de la fila correspondiente (revisar, pero creo que anda bien 100%)
         z = self.zlens[idx] if idx < len(self.zlens) else 0.0
         is_lens = 1  # todo este dataset son lentes
 

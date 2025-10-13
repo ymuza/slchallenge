@@ -5,8 +5,8 @@ import os
 os.makedirs("outputs", exist_ok=True)
 
 KNN_PATH = "outputs/knn_predictions.csv"
-ALIGNED_PATH = "outputs/submission_real_aligned.csv"
-OUTPUT_PATH = "outputs/submission_final_knn.csv"
+ALIGNED_PATH = "documentos_viejos/submission_real_aligned.csv"
+OUTPUT_PATH = "documentos_viejos/submission_final_knn.csv"
 
 print("🔹 Cargando predicciones del KNN y redshifts alineados...")
 

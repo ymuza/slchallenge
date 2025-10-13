@@ -6,7 +6,7 @@ import os
 
 # --- Configuración ---
 os.makedirs("outputs", exist_ok=True)
-SUB_PATH = "outputs/submission_final.csv"
+SUB_PATH = "documentos_viejos/submission_final.csv"
 Z_TRAIN_PATH = "outputs/z_train.npy"  # para referencia del dominio de entrenamiento
 
 print("🔹 Cargando resultados del KNN...")

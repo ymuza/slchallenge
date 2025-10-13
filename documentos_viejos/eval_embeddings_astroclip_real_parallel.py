@@ -22,7 +22,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 # ---------------------------------------------------------------
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 DATASET_DIR = "/media/yamil/b5ef7208-1e9c-40d4-ab93-390950eedbce/astroclip_test_dataset/test_dataset"
-OUTPUT_DIR = "outputs"
+OUTPUT_DIR = "../outputs"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 EMB_PATH = os.path.join(OUTPUT_DIR, "embeddings_real_v3.npy")
 IDS_PATH = os.path.join(OUTPUT_DIR, "ids_real_v3.npy")

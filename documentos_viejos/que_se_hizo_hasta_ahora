@@ -1,0 +1,155 @@
+
+
+**********************************************************
+- Embeddings completos (100k objetos).
+
+- Clasificador lente/no-lente funcional.
+
+- Predicción de redshift con KNN en espacio latente.
+
+- Scripts para evaluar y graficar resultados.
+
+- Generador de submission CSV para el challenge.
+************************************************************
+
+
+
+
+pasos a seguir:
+
+1 - Generar embeddings
+
+
+"python3 eval_embeddings2.py"
+
+Crea:
+
+outputs/embeddings.npy → embeddings (100k × 1024)
+
+outputs/labels.npy → 0 (non-lens) o 1 (lens)
+
+outputs/ids.txt → IDs alineados a los FITS
+
+👉 Este paso es la base, solo hay que hacerlo una vez (si ya existen los archivos, no hace falta repetirlo).
+
+
+
+2 - Entrenar KNN con los catálogos (lenses + nonlenses)
+
+
+"python3 photoz_train_combined_v2.py --k 5"
+
+    Carga embeddings y catálogos (parameters.fits).
+
+    Hace el matching IDs ↔ redshifts (zlens y z_central).
+
+    Entrena un KNN regressor en el espacio latente.
+
+    Calcula métricas (RMSE, MAE).
+
+    Guarda resultados.
+
+👉 Este es el script principal para hacer el redshift estimation.
+
+
+3 - Visualizar resultados (scatter plot)
+
+"python3 photoz_scatter.py"
+
+Genera gráfico z_true vs z_phot con línea de identidad.
+
+Calcula y muestra dispersión + RMSE.
+
+Guarda en outputs/photoz_scatter.png.
+
+👉 Sirve para comparar visualmente tus predicciones con los valores reales
+
+
+4 - Comparar distintos valores de K:
+
+  "python3 photoz_compare_k_v2.py"
+
+ Evalúa varios valores de k (ej: 1, 3, 5, 10).
+
+Reporta RMSE y MAE para cada uno.
+
+Guarda gráfico outputs/photoz_k_comparison.png.
+
+👉 Con esto puedes ver si k=5 es realmente el mejor o si conviene otro.
+
+
+
+redshift estimation - metricas
+
+MAE → te dice cuál es la desviación típica promedio de las predicciones de redshift.
+
+RMSE → te muestra si el modelo se está equivocando mucho en algunos objetos particulares.
+
+Ejemplo:
+
+MAE = 0.03
+
+RMSE = 0.07
+
+
+
+##############################################################################
+
+
+
+Archivos
+********************************************************************************
+🔹 Núcleo
+   ------
+eval_embeddings2.py → Extrae embeddings (imagenes → 1024-dim vector).
+
+train_classifier.py → Clasifica lentes vs no-lentes.
+
+photoz_train.py → Predice z con KNN usando embeddings y zlens.
+
+photoz_scatter.py → Gráfico de dispersión z_true vs z_pred.
+
+photoz_compare_k.py → Evalúa KNN con distintos valores de k.
+
+photoz_train_combined_v2.py → Integra lenses + non-lenses para redshift.
+
+challenge_submission.py → Genera archivo final de submission.
+
+************************************************************************************
+🔹 Utilidades / auxiliares
+   -----------------------
+tests.py → Inspección de FITS (parameters.fits, IDs, columnas).
+
+debug_ids.py → Debug del matching de IDs entre embeddings y catálogo.
+
+match_nonlenses.py → Inspección y matching específico para non-lenses.
+
+
+****************************************************************************************
+
+🔹 Experimentos / secundarios
+   ---------------------------
+
+regression_plot_predictions.py → Gráfico regresión + matriz confusión del clasificador binario.
+
+plot_embeddings_vs_z.py → Visualiza embeddings reducidos vs z.
+
+predict_classifier.py → Usa el clasificador entrenado para predecir nuevas muestras.
+
+###############################################################################################
+
+steps para el challenge
+-----------------------
+
+1 - Embeddings -> python3 eval_embeddings2.py
+
+2 - clasificacion lente vs no lente -> python3 train_classifier.py
+
+3 - Photo-z solo lenses -> python3 photoz_scatter.py
+
+	Photo-z - comparar K ->python3 photoz_compare_k.py
+
+	Photo-z avanzado (lenses/nonlenses) -> python3 photoz_train_combined_v2.py
+
+4 - Envio del challenge (genera csv) -> challenge_submission.py
+

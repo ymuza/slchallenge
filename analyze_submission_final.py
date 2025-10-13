@@ -5,7 +5,7 @@ import seaborn as sns
 import os
 
 # --- Configuración ---
-SUBMISSION_PATH = "outputs/submission_final.csv"
+SUBMISSION_PATH = "documentos_viejos/submission_final.csv"
 os.makedirs("outputs", exist_ok=True)
 
 print("🔹 Cargando submission_final.csv...")

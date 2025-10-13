@@ -26,7 +26,7 @@ import os
 TRAIN_EMB = "outputs/embeddings_updated.npy"
 TRAIN_LAB = "outputs/labels_updated.npy"
 REAL_EMB  = "outputs/embeddings_test.npy"
-OUT_PATH  = "documentos_viejos/embeddings_lens_probability_map.png"
+OUT_PATH  = "embeddings_lens_probability_map.png"
 K = 15  # número de vecinos para estimar probabilidad
 
 # ---------------- Cargar datos ----------------
@@ -84,6 +84,6 @@ plt.title("Mapa de probabilidad de Lenses (espacio de embeddings)")
 plt.legend(markerscale=5)
 plt.tight_layout()
 
-os.makedirs("outputs", exist_ok=True)
+os.makedirs("../outputs", exist_ok=True)
 plt.savefig(OUT_PATH, dpi=200)
 print(f"✅ Gráfico guardado en {OUT_PATH}")

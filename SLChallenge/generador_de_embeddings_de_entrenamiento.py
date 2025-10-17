@@ -77,10 +77,10 @@ if __name__ == "__main__":
     labels = np.concatenate([labels_lens, labels_non])
 
     # Guardamos
-    os.makedirs("../outputs", exist_ok=True)
-    np.save("../outputs/embeddings.npy", embeddings)
-    np.save("../outputs/labels.npy", labels)
-    np.savetxt("../outputs/ids.txt", ids, fmt="%s")
+    os.makedirs("outputs", exist_ok=True)
+    np.save("outputs/embeddings.npy", embeddings)
+    np.save("outputs/labels.npy", labels)
+    np.savetxt("outputs/ids.txt", ids, fmt="%s")
 
     print(f"✅ Embeddings finales: {embeddings.shape}")
     print(f"   - Lentes: {sum(labels==1)} | No-lentes: {sum(labels==0)}")

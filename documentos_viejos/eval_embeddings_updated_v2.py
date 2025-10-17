@@ -29,7 +29,7 @@ from tensor_dataset_indexmap import GalaxyBatchDataset
 
 # ---------------- CONFIG ----------------
 TEST_ROOT = "/media/yamil/b5ef7208-1e9c-40d4-ab93-390950eedbce/astroclip_test_dataset"
-OUTPUT_DIR = "../outputs"
+OUTPUT_DIR = "../SLChallenge/outputs"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)

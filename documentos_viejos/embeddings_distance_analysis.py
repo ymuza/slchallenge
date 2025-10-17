@@ -11,9 +11,9 @@ from sklearn.decomposition import PCA
 from sklearn.neighbors import NearestNeighbors
 
 # ---------------- Config ----------------
-EMB_TRAIN_PATH = "../outputs/embeddings.npy"
-LABELS_TRAIN_PATH = "../outputs/labels.npy"
-EMB_REAL_PATH = "../outputs/embeddings_test.npy"
+EMB_TRAIN_PATH = "../SLChallenge/outputs/embeddings.npy"
+LABELS_TRAIN_PATH = "../SLChallenge/outputs/labels.npy"
+EMB_REAL_PATH = "../SLChallenge/outputs/embeddings_test.npy"
 K = 10  # vecinos
 
 # ---------------- Load ----------------

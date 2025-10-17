@@ -22,11 +22,11 @@ import pandas as pd
 import os
 
 # --- Configuración de paths ---
-Z_TRAIN_PATH = "../outputs/z_train.npy"
+Z_TRAIN_PATH = "../SLChallenge/outputs/z_train.npy"
 SUBMISSION_PATH = "submission_real.csv"
 OUTPUT_PATH = "submission_real_aligned.csv"
 
-os.makedirs("../outputs", exist_ok=True)
+os.makedirs("../SLChallenge/outputs", exist_ok=True)
 
 print("🔹 Cargando datos...")
 z_train = np.load(Z_TRAIN_PATH)

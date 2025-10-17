@@ -84,6 +84,6 @@ plt.title("Mapa de probabilidad de Lenses (espacio de embeddings)")
 plt.legend(markerscale=5)
 plt.tight_layout()
 
-os.makedirs("../outputs", exist_ok=True)
+os.makedirs("../SLChallenge/outputs", exist_ok=True)
 plt.savefig(OUT_PATH, dpi=200)
 print(f"✅ Gráfico guardado en {OUT_PATH}")

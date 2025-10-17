@@ -12,10 +12,10 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc, precision_recall_curve
 
 # --- Paths ---
-OUTPUT_DIR = "../outputs/final_diagnostics"
+OUTPUT_DIR = "../SLChallenge/outputs/final_diagnostics"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
-SUB_PATH = "../outputs/submission_final_knn_calibrated.csv"
-Z_TRAIN_PATH = "../outputs/z_train.npy"
+SUB_PATH = "../SLChallenge/outputs/submission_final_knn_calibrated.csv"
+Z_TRAIN_PATH = "../SLChallenge/outputs/z_train.npy"
 
 print("🔹 Cargando datos...")
 df = pd.read_csv(SUB_PATH)

@@ -13,11 +13,11 @@ from tqdm import tqdm
 # --- CONFIGURACIÓN ---
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 EMBEDDINGS_PATH = "SLChallenge/outputs/embeddings.npy"
-IDS_PATH = "SLChallenge/outputs/ids.npy"
+IDS_PATH = "SLChallenge/outputs/ids.txt"  # Archivo de texto
 LABELS_PATH = "SLChallenge/clases.csv"
 BATCH_SIZE = 256
-LEARNING_RATE = 0.001
-MAX_EPOCHS = 100
+LEARNING_RATE = 0.0005
+MAX_EPOCHS = 70
 PATIENCE = 15  # Early stopping
 
 print(f"🔧 Usando dispositivo: {DEVICE}")
@@ -25,21 +25,21 @@ print(f"🔧 Usando dispositivo: {DEVICE}")
 # --- CARGAR DATOS ---
 print("📦 Cargando embeddings y etiquetas...")
 embeddings = np.load(EMBEDDINGS_PATH)
-ids = np.load(IDS_PATH)
-labels_df = pd.read_csv(LABELS_PATH)
 
-# Crear diccionario id -> label
-label_dict = dict(zip(labels_df['id'], labels_df['is_lens']))
+# Cargar IDs desde archivo de texto
+with open(IDS_PATH, 'r') as f:
+    ids = np.array([line.strip() for line in f])
 
-# Filtrar solo los IDs que tenemos embeddings
-labels = np.array([label_dict[obj_id] for obj_id in ids if obj_id in label_dict])
-valid_mask = np.array([obj_id in label_dict for obj_id in ids])
-embeddings = embeddings[valid_mask]
-ids = ids[valid_mask]
+labels_df = pd.read_csv(LABELS_PATH, header=None)
+labels = labels_df[0].to_numpy()
 
-print(f"✅ Datos cargados: {len(embeddings)} muestras")
-print(f"   Clase 0 (no-lente): {np.sum(labels == 0)} ({100 * np.mean(labels == 0):.1f}%)")
-print(f"   Clase 1 (lente): {np.sum(labels == 1)} ({100 * np.mean(labels == 1):.1f}%)")
+# Asumir que el CSV tiene el mismo orden que los embeddings
+# (primeros N objetos: object_00000, object_00001, ..., object_N-1)
+#labels = labels_df['1'].values[:len(embeddings)]
+
+# print(f"✅ Datos cargados: {len(embeddings)} muestras")
+# print(f"   Clase 0 (no-lente): {np.sum(labels == 0)} ({100 * np.mean(labels == 0):.1f}%)")
+# print(f"   Clase 1 (lente): {np.sum(labels == 1)} ({100 * np.mean(labels == 1):.1f}%)")
 
 # --- SPLIT TRAIN/VAL/TEST ---
 X_temp, X_test, y_temp, y_test = train_test_split(
@@ -88,10 +88,10 @@ class LensClassifier(nn.Module):
         super().__init__()
         self.network = nn.Sequential(
             nn.Linear(1024, 512),
-            nn.Tanh(),
+            nn.RReLU(),
             nn.Dropout(0.3),
             nn.Linear(512, 256),
-            nn.Tanh(),
+            nn.RReLU(),
             nn.Dropout(0.3),
             nn.Linear(256, 2)
         )
@@ -186,7 +186,7 @@ for epoch in range(MAX_EPOCHS):
     if val_loss < best_val_loss:
         best_val_loss = val_loss
         patience_counter = 0
-        torch.save(model.state_dict(), 'SLChallenge/outputs/best_lens_classifier.pth')
+        torch.save(model.state_dict(), 'outputs/best_lens_classifier.pth')
     else:
         patience_counter += 1
         if patience_counter >= PATIENCE:
@@ -194,7 +194,7 @@ for epoch in range(MAX_EPOCHS):
             break
 
 # Cargar mejor modelo
-model.load_state_dict(torch.load('SLChallenge/outputs/best_lens_classifier.pth'))
+model.load_state_dict(torch.load('outputs/best_lens_classifier.pth'))
 
 # --- EVALUACIÓN EN TEST ---
 print("\n📊 Evaluación en conjunto de test...\n")
@@ -265,7 +265,7 @@ results = {
 
 import json
 
-with open('SLChallenge/outputs/nn_classifier_results.json', 'w') as f:
+with open('outputs/nn_classifier_results.json', 'w') as f:
     json.dump(results, f, indent=2)
 
 print("✅ Resultados guardados en outputs/nn_classifier_results.json")

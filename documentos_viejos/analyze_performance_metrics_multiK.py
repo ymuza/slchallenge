@@ -7,10 +7,10 @@ from sklearn.metrics import roc_curve, auc, precision_recall_curve, average_prec
 import os
 
 # --- Paths ---
-TRAIN_PATH = "../outputs/embeddings.npy"
-LABELS_PATH = "../outputs/y_train_lenses.npy"
+TRAIN_PATH = "../SLChallenge/outputs/embeddings.npy"
+LABELS_PATH = "../SLChallenge/outputs/y_train_lenses.npy"
 
-os.makedirs("../outputs", exist_ok=True)
+os.makedirs("../SLChallenge/outputs", exist_ok=True)
 
 # --- Load data ---
 print("🔹 Cargando datos...")

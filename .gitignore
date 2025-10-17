@@ -12,5 +12,5 @@
 checkpoints/
 lightning_logs/
 tensorboard_logs/
-outputs/
+SLChallenge/outputs/
 *.out

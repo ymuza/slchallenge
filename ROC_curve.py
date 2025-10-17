@@ -17,7 +17,7 @@ import os
 EMBEDDINGS_TRAIN = "outputs/embeddings.npy"
 Y_TRAIN = "outputs/y_train_lenses.npy"
 Z_TRAIN = "outputs/z_train.npy"
-OUTPUT_DIR = "outputs/roc_analysis_k"
+OUTPUT_DIR = "SLChallenge/outputs/roc_analysis_k"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Valores de K a probar

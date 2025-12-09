@@ -6,8 +6,8 @@ from torch.utils.data import TensorDataset, DataLoader
 
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-EMB_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/outputs/embeddings_test_fixed.npy"
-IDS_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/outputs/embeddings_test_ids_fixed.npy"
+EMB_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/embeddings_test_fixed.npy"
+IDS_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/embeddings_test_ids_fixed.npy"
 # CSV viejo solo para labels y nada mas
 CSV_OLD = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/submission_final_enviado.csv"
 #CSV_OLD = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/clases.csv"

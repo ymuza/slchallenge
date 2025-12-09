@@ -14,7 +14,7 @@ from tqdm import tqdm
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 EMBEDDINGS_PATH = "SLChallenge/outputs/embeddings.npy"
 IDS_PATH = "SLChallenge/outputs/ids.npy"
-LABELS_PATH = "SLChallenge/clases.csv"
+LABELS_PATH = "../SLChallenge/clases.csv"
 BATCH_SIZE = 256
 LEARNING_RATE = 0.001
 MAX_EPOCHS = 100

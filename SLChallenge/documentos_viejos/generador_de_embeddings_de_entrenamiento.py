@@ -4,7 +4,7 @@ import torch
 from torch.utils.data import DataLoader
 from astropy.io import fits
 from astroclip.models.astroclip import AstroClipModel
-from tensor_dataset_indexmap import GalaxyBatchDataset
+from SLChallenge.documentos_viejos.tensor_dataset_indexmap import GalaxyBatchDataset
 
 
 """Carga el modelo preentrenado AstroCLIP (astroclip.ckpt).

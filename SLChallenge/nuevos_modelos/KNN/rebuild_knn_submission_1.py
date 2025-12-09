@@ -5,10 +5,17 @@ from sklearn.neighbors import KNeighborsClassifier
 # ================================
 # CONFIG
 # ================================
-EMB_PATH = "outputs/embeddings_1024.npy"
-IDS_PATH = "outputs/embeddings_1024_ids.npy"
-CSV_OLD = "submission_final(1).csv"
-CSV_OUT = "outputs/submission_knn_rebuilt.csv"
+
+
+EMB_PATH = "/SLChallenge/nuevos_modelos/embeddings/embeddings_test_fixed.npy"
+IDS_PATH = "/SLChallenge/nuevos_modelos/embeddings/embeddings_test_ids_fixed.npy"
+# CSV viejo solo para labels y nada mas
+CSV_OLD = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/submission_final_enviado.csv"
+#CSV_OLD = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/clases.csv"
+CSV_OUT = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/KNN/outputs/submission_knn_rebuilt.csv"
+
+
+
 
 # ================================
 # LOAD DATA
@@ -23,7 +30,7 @@ emb = emb[order_emb]
 ids = ids[order_emb]
 
 df_old = df_old.sort_values("id")
-y = df_old["pred"].values.astype(int)
+y = df_old["preds"].values.astype(int)
 
 # ================================
 # MODEL 1 (labels): KNN con K=1
@@ -44,8 +51,8 @@ pred_probs = knn_prob.predict_proba(emb)[:, 1]  # probabilidad de 1
 # ================================
 df_new = pd.DataFrame({
     "id": ids,
-    "pred_label": pred_labels,
-    "pred_prob": pred_probs
+    "preds": pred_labels,
+    "prob": pred_probs
 })
 
 df_new.to_csv(CSV_OUT, index=False)

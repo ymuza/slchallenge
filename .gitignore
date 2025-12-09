@@ -14,3 +14,7 @@ lightning_logs/
 tensorboard_logs/
 SLChallenge/outputs/
 *.out
+*.npy
+embeddings
+
+

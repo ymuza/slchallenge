@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -9,51 +8,65 @@ from sklearn.metrics import confusion_matrix, roc_curve, auc, classification_rep
 import matplotlib.pyplot as plt
 import seaborn as sns
 from tqdm import tqdm
+import json
+import os
 
-# --- CONFIGURACIÓN ---
+# ============================
+# CONFIGURACIÓN
+# ============================
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-EMBEDDINGS_PATH = "SLChallenge/outputs/embeddings.npy"
-IDS_PATH = "SLChallenge/outputs/ids.txt"  # Archivo de texto
-LABELS_PATH = "SLChallenge/clases.csv"
-BATCH_SIZE = 256
-LEARNING_RATE = 0.0005
-MAX_EPOCHS = 70
-PATIENCE = 15  # Early stopping
+
+EMBEDDINGS_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/train_embeddings_dino_224.npy"
+IDS_PATH        = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/train_ids_dino.npy"
+LABELS_PATH     = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/train_labels_dino.npy"
+
+BATCH_SIZE     = 256
+LEARNING_RATE  = 0.0005
+MAX_EPOCHS     = 70
+PATIENCE       = 15
 
 print(f"🔧 Usando dispositivo: {DEVICE}")
 
-# --- CARGAR DATOS ---
-print("📦 Cargando embeddings y etiquetas...")
+# Crear directorio outputs si no existe
+os.makedirs("outputs", exist_ok=True)
+
+
+# ============================
+# CARGA DE DATOS CORRECTA
+# ============================
+print("📦 Cargando embeddings, IDs y etiquetas...")
+
 embeddings = np.load(EMBEDDINGS_PATH)
+ids        = np.load(IDS_PATH)       # Ya es un .npy
+labels     = np.load(LABELS_PATH)    # Ya es un .npy
 
-# Cargar IDs desde archivo de texto
-with open(IDS_PATH, 'r') as f:
-    ids = np.array([line.strip() for line in f])
+print(f"👉 Embeddings: {embeddings.shape}")
+print(f"👉 IDs: {ids.shape}")
+print(f"👉 Labels: {labels.shape}")
 
-labels_df = pd.read_csv(LABELS_PATH, header=None)
-labels = labels_df[0].to_numpy()
+assert len(embeddings) == len(labels) == len(ids), "❌ ERROR: Los tamaños no coinciden."
 
-# Asumir que el CSV tiene el mismo orden que los embeddings
-# (primeros N objetos: object_00000, object_00001, ..., object_N-1)
-#labels = labels_df['1'].values[:len(embeddings)]
 
-# print(f"✅ Datos cargados: {len(embeddings)} muestras")
-# print(f"   Clase 0 (no-lente): {np.sum(labels == 0)} ({100 * np.mean(labels == 0):.1f}%)")
-# print(f"   Clase 1 (lente): {np.sum(labels == 1)} ({100 * np.mean(labels == 1):.1f}%)")
-
-# --- SPLIT TRAIN/VAL/TEST ---
+# ============================
+# TRAIN / VAL / TEST SPLIT
+# ============================
 X_temp, X_test, y_temp, y_test = train_test_split(
     embeddings, labels, test_size=0.2, random_state=42, stratify=labels
 )
+
 X_train, X_val, y_train, y_val = train_test_split(
     X_temp, y_temp, test_size=0.2, random_state=42, stratify=y_temp
 )
 
-print(f"\n📊 Split de datos:")
-print(f"   Train: {len(X_train)} | Val: {len(X_val)} | Test: {len(X_test)}")
+print(f"\n📊 Split:")
+print(f"   Train: {len(X_train)}")
+print(f"   Val:   {len(X_val)}")
+print(f"   Test:  {len(X_test)}")
 
 
-# --- DATASET ---
+# ============================
+# DATASET
+# ============================
 class EmbeddingDataset(Dataset):
     def __init__(self, embeddings, labels):
         self.embeddings = torch.FloatTensor(embeddings)
@@ -66,23 +79,28 @@ class EmbeddingDataset(Dataset):
         return self.embeddings[idx], self.labels[idx]
 
 
-# Crear datasets
 train_dataset = EmbeddingDataset(X_train, y_train)
-val_dataset = EmbeddingDataset(X_val, y_val)
-test_dataset = EmbeddingDataset(X_test, y_test)
+val_dataset   = EmbeddingDataset(X_val, y_val)
+test_dataset  = EmbeddingDataset(X_test, y_test)
 
-# Weighted sampler para balancear clases
+
+# ============================
+# WEIGHTED SAMPLER
+# ============================
 class_counts = np.bincount(y_train)
 class_weights = 1.0 / class_counts
 sample_weights = class_weights[y_train]
 sampler = WeightedRandomSampler(sample_weights, len(sample_weights))
 
+
 train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, sampler=sampler)
-val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
+val_loader   = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
+test_loader  = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
 
-# --- MODELO ---
+# ============================
+# MODELO
+# ============================
 class LensClassifier(nn.Module):
     def __init__(self):
         super().__init__()
@@ -104,17 +122,17 @@ model = LensClassifier().to(DEVICE)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-print(f"\n🧠 Modelo creado:")
-print(f"   Arquitectura: 1024 → 512 (Tanh) → 256 (Tanh) → 2")
-print(f"   Parámetros: {sum(p.numel() for p in model.parameters()):,}")
+print("\n🧠 Modelo inicializado.")
+print(f"Parámetros totales: {sum(p.numel() for p in model.parameters()):,}")
 
 
-# --- ENTRENAMIENTO ---
+# ============================
+# TRAIN + EVALUATE
+# ============================
 def train_epoch(model, loader, criterion, optimizer):
     model.train()
     total_loss = 0
     correct = 0
-    total = 0
 
     for X_batch, y_batch in loader:
         X_batch, y_batch = X_batch.to(DEVICE), y_batch.to(DEVICE)
@@ -126,21 +144,19 @@ def train_epoch(model, loader, criterion, optimizer):
         optimizer.step()
 
         total_loss += loss.item()
-        _, predicted = outputs.max(1)
-        correct += predicted.eq(y_batch).sum().item()
-        total += y_batch.size(0)
+        _, preds = outputs.max(1)
+        correct += preds.eq(y_batch).sum().item()
 
-    return total_loss / len(loader), correct / total
+    return total_loss / len(loader), correct / len(loader.dataset)
 
 
 def evaluate(model, loader, criterion):
     model.eval()
     total_loss = 0
     correct = 0
-    total = 0
-    all_preds = []
     all_labels = []
-    all_probs = []
+    all_preds  = []
+    all_probs  = []
 
     with torch.no_grad():
         for X_batch, y_batch in loader:
@@ -151,121 +167,120 @@ def evaluate(model, loader, criterion):
 
             total_loss += loss.item()
             probs = torch.softmax(outputs, dim=1)
-            _, predicted = outputs.max(1)
+            _, preds = outputs.max(1)
 
-            correct += predicted.eq(y_batch).sum().item()
-            total += y_batch.size(0)
-
-            all_preds.extend(predicted.cpu().numpy())
+            correct += preds.eq(y_batch).sum().item()
             all_labels.extend(y_batch.cpu().numpy())
+            all_preds.extend(preds.cpu().numpy())
             all_probs.extend(probs[:, 1].cpu().numpy())
 
-    return total_loss / len(loader), correct / total, all_preds, all_labels, all_probs
+    return (
+        total_loss / len(loader),
+        correct / len(loader.dataset),
+        all_preds,
+        all_labels,
+        all_probs
+    )
 
 
+# ============================
+# TRAINING LOOP
+# ============================
 print("\n🚀 Iniciando entrenamiento...\n")
 
-best_val_loss = float('inf')
+best_val_loss = float("inf")
 patience_counter = 0
-history = {'train_loss': [], 'train_acc': [], 'val_loss': [], 'val_acc': []}
+history = {"train_loss": [], "train_acc": [], "val_loss": [], "val_acc": []}
 
 for epoch in range(MAX_EPOCHS):
     train_loss, train_acc = train_epoch(model, train_loader, criterion, optimizer)
     val_loss, val_acc, _, _, _ = evaluate(model, val_loader, criterion)
 
-    history['train_loss'].append(train_loss)
-    history['train_acc'].append(train_acc)
-    history['val_loss'].append(val_loss)
-    history['val_acc'].append(val_acc)
+    history["train_loss"].append(train_loss)
+    history["train_acc"].append(train_acc)
+    history["val_loss"].append(val_loss)
+    history["val_acc"].append(val_acc)
 
-    print(f"Epoch {epoch + 1:3d}/{MAX_EPOCHS} | "
-          f"Train Loss: {train_loss:.4f} Acc: {train_acc:.4f} | "
-          f"Val Loss: {val_loss:.4f} Acc: {val_acc:.4f}")
+    print(
+        f"Epoch {epoch+1:03d} | "
+        f"Train Loss: {train_loss:.4f} Acc: {train_acc:.4f} | "
+        f"Val Loss: {val_loss:.4f} Acc: {val_acc:.4f}"
+    )
 
-    # Early stopping
     if val_loss < best_val_loss:
         best_val_loss = val_loss
         patience_counter = 0
-        torch.save(model.state_dict(), 'outputs/best_lens_classifier.pth')
+        torch.save(model.state_dict(), "outputs/best_lens_classifier.pth")
     else:
         patience_counter += 1
         if patience_counter >= PATIENCE:
-            print(f"\n⏹️  Early stopping en época {epoch + 1}")
+            print("\n⏹️ Early stopping activado.")
             break
 
-# Cargar mejor modelo
-model.load_state_dict(torch.load('outputs/best_lens_classifier.pth'))
 
-# --- EVALUACIÓN EN TEST ---
-print("\n📊 Evaluación en conjunto de test...\n")
-test_loss, test_acc, test_preds, test_labels, test_probs = evaluate(model, test_loader, criterion)
+# ============================
+# TEST SET
+# ============================
+print("\n📊 Evaluando modelo en TEST...\n")
+
+model.load_state_dict(torch.load("outputs/best_lens_classifier.pth"))
+
+test_loss, test_acc, test_preds, test_labels, test_probs = evaluate(
+    model, test_loader, criterion
+)
 
 print(f"Test Loss: {test_loss:.4f}")
 print(f"Test Accuracy: {test_acc:.4f}")
 print("\nReporte de clasificación:")
-print(classification_report(test_labels, test_preds, target_names=['No-Lente', 'Lente']))
+print(classification_report(test_labels, test_preds, target_names=["No-Lente", "Lente"]))
 
-# --- VISUALIZACIONES ---
+
+# ============================
+# VISUALIZACIÓN + ROC
+# ============================
 fig, axes = plt.subplots(2, 2, figsize=(14, 12))
 
-# 1. Curvas de entrenamiento
-ax = axes[0, 0]
-ax.plot(history['train_loss'], label='Train Loss', linewidth=2)
-ax.plot(history['val_loss'], label='Val Loss', linewidth=2)
-ax.set_xlabel('Época', fontsize=12)
-ax.set_ylabel('Loss', fontsize=12)
-ax.set_title('Curvas de Pérdida', fontsize=14, fontweight='bold')
-ax.legend()
-ax.grid(alpha=0.3)
+# Loss curves
+axes[0, 0].plot(history["train_loss"], label="Train Loss")
+axes[0, 0].plot(history["val_loss"], label="Val Loss")
+axes[0, 0].set_title("Curvas de Pérdida")
+axes[0, 0].legend()
+axes[0, 0].grid(alpha=0.3)
 
-ax = axes[0, 1]
-ax.plot(history['train_acc'], label='Train Acc', linewidth=2)
-ax.plot(history['val_acc'], label='Val Acc', linewidth=2)
-ax.set_xlabel('Época', fontsize=12)
-ax.set_ylabel('Accuracy', fontsize=12)
-ax.set_title('Curvas de Accuracy', fontsize=14, fontweight='bold')
-ax.legend()
-ax.grid(alpha=0.3)
+# Accuracy curves
+axes[0, 1].plot(history["train_acc"], label="Train Acc")
+axes[0, 1].plot(history["val_acc"], label="Val Acc")
+axes[0, 1].set_title("Curvas de Accuracy")
+axes[0, 1].legend()
+axes[0, 1].grid(alpha=0.3)
 
-# 2. Matriz de confusión
-ax = axes[1, 0]
+# Confusion matrix
 cm = confusion_matrix(test_labels, test_preds)
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax,
-            xticklabels=['No-Lente', 'Lente'],
-            yticklabels=['No-Lente', 'Lente'])
-ax.set_xlabel('Predicción', fontsize=12)
-ax.set_ylabel('Real', fontsize=12)
-ax.set_title('Matriz de Confusión', fontsize=14, fontweight='bold')
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", ax=axes[1, 0])
+axes[1, 0].set_title("Matriz de Confusión")
 
-# 3. Curva ROC
-ax = axes[1, 1]
+# ROC curve
 fpr, tpr, _ = roc_curve(test_labels, test_probs)
 roc_auc = auc(fpr, tpr)
-
-ax.plot(fpr, tpr, linewidth=2, label=f'ROC (AUC = {roc_auc:.3f})')
-ax.plot([0, 1], [0, 1], 'k--', linewidth=1, label='Random')
-ax.set_xlabel('False Positive Rate', fontsize=12)
-ax.set_ylabel('True Positive Rate', fontsize=12)
-ax.set_title('Curva ROC', fontsize=14, fontweight='bold')
-ax.legend()
-ax.grid(alpha=0.3)
+axes[1, 1].plot(fpr, tpr, label=f"AUC = {roc_auc:.3f}")
+axes[1, 1].plot([0, 1], [0, 1], "k--")
+axes[1, 1].set_title("Curva ROC")
+axes[1, 1].legend()
+axes[1, 1].grid(alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('outputs/nn_classifier_results.png', dpi=300, bbox_inches='tight')
-print("\n💾 Gráficos guardados en outputs/nn_classifier_results.png")
+plt.savefig("outputs/nn_classifier_results.png", dpi=300)
+print("\n💾 Gráfico guardado en outputs/nn_classifier_results.png")
 
-# Guardar resultados
+# Save results JSON
 results = {
-    'test_accuracy': test_acc,
-    'test_loss': test_loss,
-    'roc_auc': roc_auc,
-    'confusion_matrix': cm.tolist(),
-    'history': history
+    "test_accuracy": test_acc,
+    "test_loss": test_loss,
+    "roc_auc": roc_auc,
+    "confusion_matrix": cm.tolist(),
+    "history": history,
 }
-
-import json
-
-with open('outputs/nn_classifier_results.json', 'w') as f:
+with open("outputs/nn_classifier_results.json", "w") as f:
     json.dump(results, f, indent=2)
 
 print("✅ Resultados guardados en outputs/nn_classifier_results.json")

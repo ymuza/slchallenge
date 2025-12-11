@@ -14,10 +14,10 @@ import os
 # ==============================
 # CONFIGURACIÓN
 # ==============================
-EMBEDDINGS_TRAIN = "outputs/embeddings.npy"
-Y_TRAIN = "outputs/y_train_lenses.npy"
-Z_TRAIN = "outputs/z_train.npy"
-OUTPUT_DIR = "SLChallenge/outputs/roc_analysis_k"
+EMBEDDINGS_TRAIN = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/train_embeddings_dino_224.npy"
+Y_TRAIN = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/y_train_lenses_aligned.npy"
+Z_TRAIN = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/z_train.npy"
+OUTPUT_DIR = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Valores de K a probar

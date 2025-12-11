@@ -6,10 +6,10 @@ from tqdm import tqdm
 
 # --- CONFIGURACIÓN ---
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-MODEL_PATH = "SLChallenge/outputs/best_lens_classifier.pth"
-TEST_EMBEDDINGS_PATH = "SLChallenge/outputs/embeddings_test_fixed.npy"  # Embeddings de TEST
-TEST_IDS_PATH = "SLChallenge/outputs/embeddings_test_ids_fixed.npy"  # IDs de TEST
-OUTPUT_CSV = "SLChallenge/outputs/red_neuronal/predictions_test.csv"
+MODEL_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/documentos_viejos/outputs/best_lens_classifier.pth"
+TEST_EMBEDDINGS_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/embeddings_test_fixed.npy"  # Embeddings de TEST
+TEST_IDS_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/embeddings_test_ids_fixed.npy"  # IDs de TEST
+OUTPUT_CSV = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/documentos_viejos/outputs/predicciones.csv"
 BATCH_SIZE = 512
 
 print(f"🔧 Usando dispositivo: {DEVICE}")

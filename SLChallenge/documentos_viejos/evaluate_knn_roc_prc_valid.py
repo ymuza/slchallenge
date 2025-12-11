@@ -8,7 +8,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import roc_curve, auc, precision_recall_curve, average_precision_score
 
 # Paths
-TRAIN_PATH = "../SLChallenge/outputs/embeddings.npy"
+TRAIN_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/embeddings_aligned.npy"
 LABELS_PATH = "../SLChallenge/outputs/y_train_lenses.npy"
 os.makedirs("../SLChallenge/outputs", exist_ok=True)
 

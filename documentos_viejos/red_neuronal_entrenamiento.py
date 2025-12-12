@@ -25,7 +25,7 @@ LEARNING_RATE  = 0.0005
 MAX_EPOCHS     = 70
 PATIENCE       = 15
 
-print(f"🔧 Usando dispositivo: {DEVICE}")
+print(f" Usando dispositivo: {DEVICE}")
 
 # Crear directorio outputs si no existe
 os.makedirs("outputs", exist_ok=True)
@@ -34,15 +34,15 @@ os.makedirs("outputs", exist_ok=True)
 # ============================
 # CARGA DE DATOS CORRECTA
 # ============================
-print("📦 Cargando embeddings, IDs y etiquetas...")
+print("Cargando embeddings, IDs y etiquetas...")
 
 embeddings = np.load(EMBEDDINGS_PATH)
 ids        = np.load(IDS_PATH)       # Ya es un .npy
 labels     = np.load(LABELS_PATH)    # Ya es un .npy
 
-print(f"👉 Embeddings: {embeddings.shape}")
-print(f"👉 IDs: {ids.shape}")
-print(f"👉 Labels: {labels.shape}")
+print(f"Embeddings: {embeddings.shape}")
+print(f"IDs: {ids.shape}")
+print(f"Labels: {labels.shape}")
 
 assert len(embeddings) == len(labels) == len(ids), "❌ ERROR: Los tamaños no coinciden."
 
@@ -122,7 +122,7 @@ model = LensClassifier().to(DEVICE)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
-print("\n🧠 Modelo inicializado.")
+print("\n Modelo inicializado.")
 print(f"Parámetros totales: {sum(p.numel() for p in model.parameters()):,}")
 
 
@@ -186,7 +186,7 @@ def evaluate(model, loader, criterion):
 # ============================
 # TRAINING LOOP
 # ============================
-print("\n🚀 Iniciando entrenamiento...\n")
+print("\nIniciando entrenamiento...\n")
 
 best_val_loss = float("inf")
 patience_counter = 0
@@ -214,7 +214,7 @@ for epoch in range(MAX_EPOCHS):
     else:
         patience_counter += 1
         if patience_counter >= PATIENCE:
-            print("\n⏹️ Early stopping activado.")
+            print("\n Early stopping activado.")
             break
 
 
@@ -270,7 +270,7 @@ axes[1, 1].grid(alpha=0.3)
 
 plt.tight_layout()
 plt.savefig("outputs/nn_classifier_results.png", dpi=300)
-print("\n💾 Gráfico guardado en outputs/nn_classifier_results.png")
+print("\n Gráfico guardado en outputs/nn_classifier_results.png")
 
 # Save results JSON
 results = {
@@ -284,4 +284,4 @@ with open("outputs/nn_classifier_results.json", "w") as f:
     json.dump(results, f, indent=2)
 
 print("✅ Resultados guardados en outputs/nn_classifier_results.json")
-print(f"\n🎯 ROC AUC Score: {roc_auc:.4f}")
+print(f"\nROC AUC Score: {roc_auc:.4f}")

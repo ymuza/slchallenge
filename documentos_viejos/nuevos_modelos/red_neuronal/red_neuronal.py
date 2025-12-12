@@ -6,31 +6,50 @@ from tqdm import tqdm
 
 # --- CONFIGURACIÓN ---
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-MODEL_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/documentos_viejos/outputs/best_lens_classifier.pth"
+MODEL_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/red_neuronal/weights/lens_classifier_dino.pth"
 TEST_EMBEDDINGS_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/embeddings_test_fixed.npy"  # Embeddings de TEST
 TEST_IDS_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/embeddings_test_ids_fixed.npy"  # IDs de TEST
-OUTPUT_CSV = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/documentos_viejos/outputs/predicciones.csv"
+OUTPUT_CSV = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/red_neuronal/outputs/predictions_test.csv"
 BATCH_SIZE = 512
 
 print(f"🔧 Usando dispositivo: {DEVICE}")
 
 
 # --- DEFINIR ARQUITECTURA (DEBE SER IGUAL AL ENTRENAMIENTO) ---
+# class LensClassifier(nn.Module):
+#     def __init__(self):
+#         super().__init__()
+#         self.network = nn.Sequential(
+#             nn.Linear(1024, 512),
+#             nn.RReLU(),
+#             nn.Dropout(0.3),
+#             nn.Linear(512, 256),
+#             nn.RReLU(),
+#             nn.Dropout(0.3),
+#             nn.Linear(256, 2)
+#         )
+#
+#     def forward(self, x):
+#         return self.network(x)
+
+
 class LensClassifier(nn.Module):
     def __init__(self):
         super().__init__()
-        self.network = nn.Sequential(
+        self.model = nn.Sequential(
             nn.Linear(1024, 512),
+            nn.BatchNorm1d(512),
             nn.RReLU(),
             nn.Dropout(0.3),
             nn.Linear(512, 256),
+            nn.BatchNorm1d(256),
             nn.RReLU(),
             nn.Dropout(0.3),
             nn.Linear(256, 2)
         )
 
     def forward(self, x):
-        return self.network(x)
+        return self.model(x)
 
 
 # --- CARGAR MODELO ---

@@ -7,8 +7,8 @@ from sklearn.neighbors import KNeighborsClassifier
 # ================================
 
 
-EMB_PATH = "/SLChallenge/nuevos_modelos/embeddings/embeddings_test_fixed.npy"
-IDS_PATH = "/SLChallenge/nuevos_modelos/embeddings/embeddings_test_ids_fixed.npy"
+EMB_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/embeddings_test_fixed.npy"
+IDS_PATH = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/embeddings_test_ids_fixed.npy"
 # CSV viejo solo para labels y nada mas
 CSV_OLD = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/submission_final_enviado.csv"
 #CSV_OLD = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/clases.csv"

@@ -22,10 +22,10 @@ OUTPUT_EMB = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nue
 OUTPUT_LABELS = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/train_labels_dino.npy"
 OUTPUT_IDS = "/media/yamil/nvmeBlue/deep k-Correct/deep-KCorrect/SLChallenge/nuevos_modelos/embeddings/train_ids_dino.npy"
 
-# Igual que en tu generador original:
+
 TARGET_SIZE = 518
 
-# mean / std EXACTOS del pipeline anterior
+
 NORM_MEAN = [0.5, 0.5, 0.5]
 NORM_STD  = [0.25, 0.25, 0.25]
 
@@ -33,9 +33,6 @@ NORM_STD  = [0.25, 0.25, 0.25]
 BANDS = ["r", "g", "i"]
 
 
-# ============================
-# REGEX PARA DETECTAR IDS
-# ============================
 
 pattern = re.compile(r"^(D2_[LN]_\d{8})_([griyz])\.fits$")
 
@@ -57,9 +54,6 @@ def get_unique_ids(directory):
 
 
 
-# ============================
-# CARGA EXACTA DE BANDAS (como en tu script viejo)
-# ============================
 
 def load_rgb_fits(id_base: str, directory: str):
     imgs = []
